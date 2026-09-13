@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function expandAccordion(items) {
+export default function useExpandAccordion(items) {
   const [expand, setExpanded] = useState(items);
 
   const setExpandedValue = (index) => {

@@ -1,5 +1,3 @@
-// import { Link } from "react-router";
-
 export function DropdownItem({
   tag = "button",
   to,
@@ -21,12 +19,9 @@ export function DropdownItem({
 
   if (tag === "a" && to) {
     return (
-      // <Link to={to} className={combinedClasses} onClick={handleClick}>
-      //   {children}
-      // </Link>
-      <p1 className={combinedClasses} onClick={handleClick}>
+      <p className={combinedClasses} onClick={handleClick}>
         {children}
-      </p1>
+      </p>
     );
   }
 

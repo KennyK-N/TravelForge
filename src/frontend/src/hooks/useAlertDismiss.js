@@ -1,37 +1,52 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
+import { useAlertContext } from "@context/AlertContext";
 
 export const useAlertDismiss = () => {
-  const [mounted, setMounted] = useState(false);
+  const { open, value, alertType, hideAlert } = useAlertContext();
 
+  const timerRef = useRef(null);
+  const hideTimerRef = useRef(null);
   const boxRef = useRef(null);
 
-  const handleClick = () => {
-    if (!boxRef.current) return;
-    console.log(boxRef.current);
-    boxRef.current.classList.remove("scale-100");
-    boxRef.current.classList.add("scale-0");
+  function clearTimer(ref) {
+    if (ref.current) {
+      clearTimeout(ref.current);
+      ref.current = null;
+    }
+  }
 
-    const handleTransitionEnd = () => {
-      boxRef.current?.remove();
+  const closeAlert = useCallback(() => {
+    clearTimer(timerRef);
+    clearTimer(hideTimerRef);
 
-      boxRef.current?.removeEventListener("transitionend", handleTransitionEnd);
-    };
+    if (boxRef.current) {
+      boxRef.current.classList.remove("scale-100");
+      boxRef.current.classList.add("scale-0");
+    }
 
-    boxRef.current.addEventListener("transitionend", handleTransitionEnd);
-  };
+    hideTimerRef.current = setTimeout(() => {
+      hideAlert();
+      hideTimerRef.current = null;
+    }, 150);
+  }, [hideAlert]);
 
   useEffect(() => {
-    setMounted(true);
-    const timer = setTimeout(() => {
-      handleClick();
+    if (!open) return;
+    clearTimer(timerRef);
+    clearTimer(hideTimerRef);
+
+    timerRef.current = setTimeout(() => {
+      closeAlert();
     }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
+
+    return () => {
+      clearTimer(timerRef);
+    };
+  }, [open, value, alertType, closeAlert]);
 
   return {
     boxRef,
-    mounted,
-    handleClick,
+    closeAlert,
   };
 };
 

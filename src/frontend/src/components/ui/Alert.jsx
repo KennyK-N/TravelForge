@@ -1,4 +1,6 @@
-import useAlertDismiss from "@hooks/UseAlertDismiss";
+import useAlertDismiss from "@hooks/useAlertDismiss";
+import { useAlertContext } from "@context/AlertContext";
+
 const alertStyles = {
   success: {
     container:
@@ -41,25 +43,29 @@ const alertStyles = {
   },
 };
 
-export default function Alert({ alertType }) {
-  const styles = alertType ? alertStyles[alertType] : alertStyles["error"];
-  const { boxRef, mounted, handleClick } = useAlertDismiss();
+export default function Alert() {
+  const { open, value, alertType } = useAlertContext();
+
+  const { boxRef, closeAlert } = useAlertDismiss();
+  const styles = alertStyles[alertType]
+    ? alertStyles[alertType]
+    : alertStyles["error"];
   return (
     <>
       <div
         ref={boxRef}
-        className={`fixed right-0 bottom-10 block transform transition-all duration-150 ease-out z-[9999] ${
-          mounted ? "scale-100" : "scale-0"
+        className={`fixed right-0 bottom-10 block transform transition-all duration-150 ease-out z-[9999] max-w-100 min-w-75 ${
+          open ? "scale-100" : "scale-0"
         }`}
       >
-        {mounted && (
+        {open && (
           <div
             className={`ml-auto text-sm p-3 rounded-md gap-3 border max-w-4xl ${styles.container}`}
             role="alert"
           >
             <button
               onClick={() => {
-                handleClick();
+                closeAlert();
               }}
               type="button"
               aria-label={`Dismiss ${styles.type} alert`}
@@ -94,19 +100,17 @@ export default function Alert({ alertType }) {
 
               <div>
                 <p className="font-medium leading-tight capitalize">
-                  {styles.type}!
+                  {styles.type}
                 </p>
-
-                <p className={`${styles.subText} mt-2`}>
-                  This is a {styles.type} message that requires your attention.
-                </p>
-
-                <a
-                  href="#"
-                  className={`underline underline-offset-5 inline-block font-medium mt-3 ${styles.link}`}
-                >
-                  Learn more
-                </a>
+                {styles.type === "Error!" ? (
+                  <p
+                    className={`${styles.subText} mt-2 whitespace-normal break-all`}
+                  >
+                    Something went wrong: {value}
+                  </p>
+                ) : (
+                  <p className={`${styles.subText} mt-2`}>{value}</p>
+                )}
               </div>
             </div>
           </div>

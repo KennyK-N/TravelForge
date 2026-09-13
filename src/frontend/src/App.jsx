@@ -1,86 +1,106 @@
-import SignInForm from "@components/auth/SignInForm";
-import SignUpForm from "@components/auth/SignUpForm";
-import AuthLayout from "@pages/AuthLayout";
-import NotFound from "@pages/NotFound";
+import { Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom";
+
+import { useUserContext } from "@context/UserContext";
+
+import SignInForm from "@pages/auth/SignInForm";
+import SignUpForm from "@pages/auth/SignUpForm";
+import ResetPasswordForm from "@pages/auth/ResetPasswordForm";
+import ForgotPasswordForm from "@pages/auth/ForgotPasswordForm";
+import ChangePasswordForm from "@pages/auth/ChangePasswordForm";
 import Home from "@pages/Home";
 import Search from "@pages/Search";
-import Setting from "@pages/Setting";
+import UserSetting from "@pages/UserSetting";
+import About from "@pages/About";
+import CreateTravelPlan from "@pages/CreateTravelPlan";
+import ViewTravelPlan from "@pages/ViewTravelPlan";
+import NotFound from "@pages/NotFound";
+
 import AppLayout from "@layout/AppLayout";
-import About from "@pages/about";
-import Prompt from "@pages/Prompt";
-console.log("API URL:", import.meta.env.VITE_API_URL);
-console.log("MODE:", import.meta.env.MODE);
+import AuthLayout from "@layout/AuthLayout";
+import Spinner from "@components/common/Spinner";
 
-function TestWebPage() {
-  return (
-    <>
-      <AuthLayout>
-        <SignInForm />
-      </AuthLayout>
-      <AuthLayout>
-        <SignUpForm />
-      </AuthLayout>
-      <NotFound></NotFound>
-    </>
+import PageMeta from "@components/common/PageMeta";
+
+function PrivateRoute() {
+  const location = useLocation();
+  const { isAuthenticated } = useUserContext();
+
+  return isAuthenticated ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/sign-in" replace state={{ from: location }} />
   );
 }
 
-function DashboardLayout() {
-  return (
-    <AppLayout>
-      <Home></Home>
-    </AppLayout>
-  );
-}
+function PublicRoute() {
+  const location = useLocation();
+  const { isAuthenticated } = useUserContext();
 
-function SearchLayout() {
-  return (
-    <AppLayout>
-      <Search></Search>
-    </AppLayout>
-  );
-}
+  const fromLocation = location.state?.from;
 
-function SettingLayout() {
-  return (
-    <AppLayout>
-      <Setting></Setting>
-    </AppLayout>
-  );
-}
+  const redirectPath = fromLocation
+    ? `${fromLocation.pathname}${fromLocation.search}${fromLocation.hash}`
+    : "/home";
 
-function AboutLayout() {
-  return (
-    <AppLayout>
-      <About></About>
-    </AppLayout>
-  );
-}
-
-function PromptLayout() {
-  //TODO: use react.memo on the input componenets and usecallback on callback function, so we use the same callback function
-  return (
-    <AppLayout>
-      <Prompt />
-    </AppLayout>
-  );
+  return isAuthenticated ? <Navigate to={redirectPath} replace /> : <Outlet />;
 }
 
 function App() {
+  const { isAuthenticated, isAuthLoading, providerId, theme } =
+    useUserContext();
+
   return (
     <>
-      {/* <h1 className="text-4xl font-bold font-poppins text-midnight">
-        Hello Tailwind v4!
-      </h1> */}
-      {/* <TestWebPage /> */}
-      {/* <DashboardLayout></DashboardLayout> */}
-      {/* success */}
-      {/* <SearchLayout></SearchLayout> */}
-      {/* <FlexTesting /> */}
-      {/*put this in a children for a layout*/}
-      <SettingLayout></SettingLayout>
-      {/* <AboutLayout></AboutLayout> */}
-      {/* <PromptLayout></PromptLayout> */}
+      <PageMeta
+        title="TripPlanner AI Travel Planner"
+        description="Manage your travel planner in one place"
+      />
+      {isAuthLoading ? (
+        <div
+          className={`min-h-screen w-full flex items-center justify-center ${
+            theme === "dark" ? "bg-gray-900" : "bg-white"
+          }`}
+        >
+          <Spinner />
+        </div>
+      ) : (
+        <Routes>
+          <Route
+            index
+            element={
+              <Navigate to={isAuthenticated ? "/home" : "/sign-in"} replace />
+            }
+          />
+          <Route element={<PublicRoute />}>
+            <Route element={<AuthLayout />}>
+              <Route path="sign-in" element={<SignInForm />} />
+              <Route path="sign-up" element={<SignUpForm />} />
+              <Route path="forgot-password" element={<ForgotPasswordForm />} />
+              <Route path="reset-password" element={<ResetPasswordForm />} />
+            </Route>
+          </Route>
+          <Route element={<PrivateRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="home" element={<Home />} />
+              <Route path="setting" element={<UserSetting />} />
+              <Route path="about" element={<About />} />
+              <Route path="create-travel-plan" element={<CreateTravelPlan />} />
+              <Route path="search" element={<Search />} />
+              <Route path="view-travel-plan/:id" element={<ViewTravelPlan />} />
+            </Route>
+            {providerId !== "google" && (
+              <Route element={<AuthLayout />}>
+                <Route
+                  path="change-password"
+                  element={<ChangePasswordForm />}
+                />
+              </Route>
+            )}
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      )}
     </>
   );
 }

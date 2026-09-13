@@ -1,0 +1,32 @@
+name: Docker Build
+
+on:
+  workflow_run:
+    workflows: ["Lint"]
+    types:
+      - completed
+
+jobs:
+  docker-frontend:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build production Docker image
+        working-directory: ./src/frontend
+        run: docker build -f Dockerfile.prod -t frontend:latest .
+
+  docker-backend:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build backend Docker image
+        working-directory: ./src/backend
+        run: docker build -f Dockerfile.prod -t backend:latest .

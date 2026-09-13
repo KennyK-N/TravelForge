@@ -4,7 +4,6 @@ export default function Accordion({
   expand,
   description,
   title,
-  text,
 }) {
   return (
     <>
@@ -45,13 +44,29 @@ export default function Accordion({
             </svg>
           </button>
         </div>
-        {expand && (
-          <div className="px-6 py-7">
-            <p className="text-base text-gray-500 dark:text-gray-400">
+        <div
+          className={`
+          overflow-hidden
+          transition-all
+          duration-200
+          ease-out
+          ${expand ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}
+        `}
+        >
+          <div
+            className={`
+            px-6 py-7
+            transition-all
+            duration-200
+            ease-out
+            ${expand ? "translate-y-0" : "-translate-y-6"}
+          `}
+          >
+            <p className="text-base text-gray-500 dark:text-gray-400 whitespace-normal break-words leading-relaxed">
               {description}
             </p>
           </div>
-        )}
+        </div>
       </div>
     </>
   );

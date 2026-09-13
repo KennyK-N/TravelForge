@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  postgres-app:
+    image: postgres:15
+    container_name: postgres-app
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb_app
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_app_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  postgres_app_data:
+
+networks:
+  app-network:
+    external: true

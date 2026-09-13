@@ -1,15 +1,7 @@
-import {
-  LayoutDashboard,
-  Home,
-  StickyNote,
-  Layers,
-  Flag,
-  Calendar,
-  LifeBuoy,
-  Settings,
-} from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { Home, Info, Map, Search, Settings } from "lucide-react";
 
-import Sidebar from "@components/sidebar/Sidebar";
+import Sidebar from "@components/sidebar/SideBar";
 import SideBarItem from "@components/sidebar/SideBarItem";
 
 export default function SideBarLayout() {
@@ -17,21 +9,51 @@ export default function SideBarLayout() {
     <>
       <Sidebar>
         {/*children */}
-        <SideBarItem icon={<Home size={20} />} text="Home" alert />
-        <SideBarItem
-          icon={<LayoutDashboard size={20} />}
-          text="Dashboard"
-          active
-        />
-        <SideBarItem icon={<StickyNote size={20} />} text="Projects" alert />
-        <SideBarItem icon={<Calendar size={20} />} text="Calendar" />
-        <SideBarItem icon={<Layers size={20} />} text="Tasks" />
-        <SideBarItem icon={<Flag size={20} />} text="Reporting" />
-
-        <hr className="my-3" />
-
-        <SideBarItem icon={<Settings size={20} />} text="Settings" />
-        <SideBarItem icon={<LifeBuoy size={20} />} text="Help" />
+        <NavLink to="/home">
+          {({ isActive }) => (
+            <SideBarItem
+              icon={<Home size={20} />}
+              text="Home"
+              active={isActive}
+            />
+          )}
+        </NavLink>
+        <NavLink to="/search">
+          {({ isActive }) => (
+            <SideBarItem
+              icon={<Search size={20} />}
+              text="Search"
+              active={isActive}
+            />
+          )}
+        </NavLink>
+        <NavLink to="/create-travel-plan">
+          {({ isActive }) => (
+            <SideBarItem
+              icon={<Map size={20} />}
+              text="Create Travel Plan"
+              active={isActive}
+            />
+          )}
+        </NavLink>
+        <NavLink to="/setting">
+          {({ isActive }) => (
+            <SideBarItem
+              icon={<Settings size={20} />}
+              text="Settings"
+              active={isActive}
+            />
+          )}
+        </NavLink>
+        <NavLink to="/about">
+          {({ isActive }) => (
+            <SideBarItem
+              icon={<Info size={20} />}
+              text="About"
+              active={isActive}
+            />
+          )}
+        </NavLink>
       </Sidebar>
     </>
   );

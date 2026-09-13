@@ -5,7 +5,7 @@ const Switch = ({
   defaultChecked = false,
   disabled = false,
   onChange,
-  color = "blue", // Default to blue color
+  color = "blue",
 }) => {
   const [isChecked, setIsChecked] = useState(defaultChecked);
 
@@ -39,7 +39,7 @@ const Switch = ({
 
   return (
     <label
-      className={`flex cursor-pointer select-none items-center gap-3 text-sm font-medium break-words ${
+      className={`flex cursor-pointer select-none items-center gap-3 text-base font-medium break-words ${
         disabled ? "text-gray-400" : "text-gray-700 dark:text-gray-400"
       }`}
       onClick={handleToggle} // Toggle when the label itself is clicked

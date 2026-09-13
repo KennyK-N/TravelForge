@@ -1,0 +1,49 @@
+{
+  "name": "tripplanner-ai backend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "dotenv -e .env.dev -- nodemon ./src/index.js",
+    "prod": "dotenv -e .env.prod -- node ./src/index.js",
+    "db:migrate:dev": "dotenv -e .env.dev -- npx prisma migrate dev",
+    "db:migrate:prod": "dotenv -e .env.prod -- npx prisma migrate deploy",
+    "db:migrate:reset:dev": "dotenv -e .env.dev -- npx prisma migrate reset",
+    "db:migrate:reset:prod": "dotenv -e .env.prod -- npx prisma migrate reset",
+    "db:generate:dev": "dotenv -e .env.dev -- npx prisma generate",
+    "db:generate:prod": "dotenv -e .env.prod -- npx prisma generate",
+    "db:studio:dev": "dotenv -e .env.dev -- npx prisma studio",
+    "db:studio:prod": "dotenv -e .env.prod -- npx prisma studio",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@getbrevo/brevo": "^5.0.4",
+    "@prisma/client": "^6.19.3",
+    "axios": "^1.16.1",
+    "better-auth": "^1.6.11",
+    "chalk": "^5.6.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "groq-sdk": "^1.2.1",
+    "helmet": "^8.2.0",
+    "morgan": "^1.11.0",
+    "prisma": "^6.12.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
+    "nodemon": "^3.1.14"
+  },
+  "imports": {
+    "#backend/*": "./src/*"
+  }
+}

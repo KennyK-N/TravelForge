@@ -13,21 +13,30 @@ function Input({
   success = false,
   error = false,
   hint,
+  autoComplete = "off",
+  relative = true,
 }) {
-  let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
+  const baseClasses =
+    "h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3";
+
+  let stateClasses;
 
   if (disabled) {
-    inputClasses += ` text-gray-500 border-gray-300 opacity-40 bg-gray-100 cursor-not-allowed dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 opacity-40`;
+    stateClasses =
+      "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-500 opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400";
   } else if (error) {
-    inputClasses += `  border-error-500 focus:border-error-300 focus:ring-error-500/20 dark:text-error-400 dark:border-error-500 dark:focus:border-error-800`;
+    stateClasses =
+      "border-error-500 text-gray-800 focus:border-error-500 focus:ring-error-500/20 dark:border-error-500 dark:text-white/90 dark:focus:border-error-500";
   } else if (success) {
-    inputClasses += `  border-success-500 focus:border-success-300 focus:ring-success-500/20 dark:text-success-400 dark:border-success-500 dark:focus:border-success-800`;
+    stateClasses =
+      "border-success-500 text-gray-800 focus:border-success-500 focus:ring-success-500/20 dark:border-success-500 dark:text-white/90 dark:focus:border-success-500";
   } else {
-    inputClasses += ` bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800`;
+    stateClasses =
+      "border-gray-300 bg-transparent text-gray-800 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800";
   }
 
   return (
-    <div className="relative">
+    <div className={relative ? "relative" : "w-full"}>
       <input
         type={type}
         id={id}
@@ -39,7 +48,8 @@ function Input({
         max={max}
         step={step}
         disabled={disabled}
-        className={inputClasses}
+        autoComplete={autoComplete}
+        className={`${baseClasses} ${stateClasses} ${className}`}
       />
 
       {hint && (

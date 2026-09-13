@@ -1,12 +1,38 @@
-// import { useTheme } from "../../context/ThemeContext";
+import { useMutation } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
+
+import { useUserContext } from "@context/UserContext";
+import updateTheme from "@services/updateTheme";
 
 export const ThemeToggleButton = () => {
-  // const { toggleTheme } = useTheme();
-  const toggleTheme = () => {};
+  const { setTheme, theme } = useUserContext();
+
+  const location = useLocation();
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const val = theme === "dark" ? false : true;
+      return await updateTheme(val, setTheme);
+    },
+  });
+
+  if (location.pathname === "/setting") {
+    return (
+      <button
+        className="h-11 w-11 rounded-full bg-transparent border-0 shadow-none pointer-events-none"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+    );
+  }
+
+  const isLoading = mutation.isPending;
+
   return (
     <button
-      onClick={toggleTheme}
+      onClick={() => mutation.mutate()}
       className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+      disabled={isLoading}
     >
       <svg
         className="hidden dark:block"

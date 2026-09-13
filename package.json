@@ -5,53 +5,25 @@
   "main": "src/backend/index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "client:install": "npm install --prefix src/frontend",
-    "server:install": "npm install --prefix ./",
-    "server:dev": "dotenv -e .env.dev -- nodemon src/backend/index.js",
+    "server:install": "npm install --prefix src/backend",
+    "server:dev": "npm run dev --prefix src/backend",
     "client:dev": "npm run dev --prefix src/frontend",
     "client:prod:build": "npm run build --prefix src/frontend",
     "client:prod:preview": "npm run preview --prefix src/frontend",
-    "server:prod": "dotenv -e .env.prod -- node src/backend/index.js",
-    "db:migrate:dev": "dotenv -e .env.dev -- npx prisma migrate dev",
-    "db:migrate:prod": "dotenv -e .env.prod -- npx prisma migrate deploy",
-    "db:migrate:reset:dev": "dotenv -e .env.dev -- npx prisma migrate reset",
-    "db:migrate:reset:prod": "dotenv -e .env.prod -- npx prisma migrate reset",
-    "db:generate:dev": "dotenv -e .env.dev -- npx prisma generate",
-    "db:generate:prod": "dotenv -e .env.prod -- npx prisma generate",
-    "db:studio:dev": "dotenv -e .env.dev -- npx prisma studio",
-    "db:studio:prod": "dotenv -e .env.prod -- npx prisma studio",
-    "docker:up:dev": "docker-compose -f docker-compose.dev.yml up -d",
-    "docker:down:dev": "docker-compose -f docker-compose.dev.yml down",
-    "docker:reset:dev": "docker-compose -f docker-compose.dev.yml down -v",
-    "docker:up:prod": "docker-compose -f docker-compose.prod.yml up -d",
-    "docker:down:prod": "docker-compose -f docker-compose.prod.yml down",
-    "docker:reset:prod": "docker-compose -f docker-compose.prod.yml down -v",
-    "n8n:dev": "npx n8n"
+    "server:prod": "npm run prod --prefix src/backend",
+    "dev:studio": "npm run db:studio:dev --prefix src/backend",
+    "prod:studio": "npm run db:studio:prod --prefix src/backend",
+    "docker:up:dev": "cd n8n && docker-compose -f docker-compose.dev.yml up -d",
+    "docker:down:dev": "docker-compose -f docker-compose.dev.yml down --prefix src/n8n",
+    "docker:reset:dev": "docker-compose -f docker-compose.dev.yml down -v --prefix src/n8n",
+    "docker:up:prod": "docker-compose -f docker-compose.prod.yml up -d --prefix src/n8n",
+    "docker:down:prod": "docker-compose -f docker-compose.prod.yml down --prefix src/n8n",
+    "docker:reset:prod": "docker-compose -f docker-compose.prod.yml down -v --prefix src/n8n",
+    "n8n:install": "npx n8n",
+    "docker:create:network": "docker network create app-network"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@prisma/client": "^6.19.3",
-    "axios": "^1.16.1",
-    "better-auth": "^1.6.11",
-    "chalk": "^5.6.2",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.5.2",
-    "groq-sdk": "^1.2.1",
-    "helmet": "^8.2.0",
-    "morgan": "^1.11.0"
-  },
-  "devDependencies": {
-    "dotenv-cli": "^11.0.0",
-    "nodemon": "^3.1.14",
-    "prisma": "^6.19.3"
-  },
-  "imports": {
-    "#backend/*": "./src/backend/*",
-    "#frontend/*": "./src/frontend/*"
-  }
+  "license": "ISC"
 }
