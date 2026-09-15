@@ -52,7 +52,7 @@ function App() {
   return (
     <>
       <PageMeta
-        title="TripPlanner AI Travel Planner"
+        title="TravelForge AI Travel Planner"
         description="Manage your travel planner in one place"
       />
       {isAuthLoading ? (

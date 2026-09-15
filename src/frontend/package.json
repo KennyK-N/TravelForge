@@ -1,13 +1,14 @@
 {
-  "name": "tripplanner-ai front end",
+  "name": "TravelForge front-end",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --mode dev",
     "build": "vite build --mode prod",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "docker:up:dev": "docker-compose -f docker-compose.dev.yml up -d",
+    "preview": "vite preview",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@fullcalendar/interaction": "^6.1.15",

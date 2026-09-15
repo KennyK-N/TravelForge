@@ -1,0 +1,13 @@
+{
+  "name": "TravelForge database",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "docker:up:dev": "docker-compose -f docker-compose.dev.yml up -d"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

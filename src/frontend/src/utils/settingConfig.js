@@ -16,7 +16,8 @@ export function getSettingsConfig({
   return [
     {
       title: "Enable Email Notification",
-      description: "descriptionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      description:
+        "Get notified by email about upcoming trips on your account.",
       toggle: true,
       buttonText: null,
       useMutate: true,
@@ -37,7 +38,8 @@ export function getSettingsConfig({
     },
     {
       title: "Enable Dark Mode",
-      description: "",
+      description:
+        "Switch to a darker color scheme that's generally easier on the eyes.",
       toggle: true,
       buttonText: null,
       useMutate: true,
@@ -46,7 +48,8 @@ export function getSettingsConfig({
     },
     {
       title: "Enable Confirm before delete",
-      description: "descriptionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      description:
+        "Show a confirmation prompt before anything gets deleted, so you don't lose data by accident.",
       toggle: true,
       buttonText: null,
       useMutate: true,
@@ -67,12 +70,13 @@ export function getSettingsConfig({
     },
     {
       title: "Delete Account",
-      description: "descriptionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      toggle: false,
+      description:
+        "Permanently delete your account and all associated data. This action cannot be undone.",
       buttonText: "Delete Account",
+      modalText: "Do you want to delete your account?",
+      toggle: false,
       useMutate: true,
       useModal: true,
-      modalText: "Do you want to delete your account?",
       fn: async () => {
         const res = await axios.delete(`${backEndUrl}/auth/delete-account`, {
           withCredentials: true,
@@ -87,9 +91,9 @@ export function getSettingsConfig({
           {
             title: "Change Password",
             description:
-              "descriptionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa Non google oauth account might not use google oauth",
-            toggle: false,
+              "Update the password you use to sign in. This option isn't available if you signed up using Google.",
             buttonText: "Change Password",
+            toggle: false,
             useMutate: false,
             fn: () => {
               navigate("/change-password");
@@ -99,12 +103,13 @@ export function getSettingsConfig({
       : []),
     {
       title: "Clear Data",
-      description: "description",
-      toggle: false,
+      description:
+        "Delete all of your tasks. Your account and settings will remain untouched.",
       buttonText: "Clear Data",
+      modalText: "Do you want to delete all of your tasks?",
+      toggle: false,
       useMutate: true,
       useModal: true,
-      modalText: "Do you want to delete all of your tasks?",
       fn: async () => {
         const res = await axios.delete(`${backEndUrl}/task/deleteAllTasks`, {
           withCredentials: true,
@@ -116,12 +121,13 @@ export function getSettingsConfig({
     },
     {
       title: "Report Crash",
-      description: "description",
-      toggle: false,
+      description:
+        "Ran into a bug or crash? Send us an email and we'll look into it.",
       buttonText: "Report Crash",
+      toggle: false,
       useMutate: false,
       fn: () => {
-        window.location.href = "mailto:kennykwan903@gmail.com";
+        window.location.href = `mailto:${import.meta.env.VITE_SUPPORT_EMAIL}`;
       },
     },
   ];
