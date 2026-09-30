@@ -7,8 +7,10 @@
   "scripts": {
     "dev": "dotenv -e .env.dev -- nodemon ./src/index.js",
     "prod": "dotenv -e .env.prod -- node ./src/index.js",
+    "start": "prisma migrate deploy && node ./src/index.js",
     "db:init": "npx prisma init",
     "db:generate": "npx prisma generate",
+    "postinstall": "prisma generate",
     "db:migrate:reset": "dotenv -e .env.dev -- npx prisma migrate reset",
     "db:migrate:dev": "dotenv -e .env.dev -- npx prisma migrate dev",
     "db:migrate:prod": "dotenv -e .env.prod -- npx prisma migrate deploy",
