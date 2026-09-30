@@ -3,12 +3,12 @@ const aboutConfig = [
     id: 0,
     title: "What is TravelForge?",
     description:
-      "TravelForge AI is a travel planning app that takes your destination, dates, and interests and turns them into a complete itinerary. It creates personalized daily plans, maps out routes, and keeps you informed with up-to-date weather, all in one place. In this application, it uses AI to help generate with the itinerary generation, alongside real routing and weather data to help make the plan more useful.",
+      "TravelForge AI is a travel planning app that takes your destination, dates, and interests and turns them into a complete itinerary. It creates personalized day-by-day plans, maps out routes, and keeps you informed with up-to-date weather, all in one place. In this application, it uses AI to help generate with the itinerary generation, alongside real routing and weather data to help make the plan more useful.",
   },
   {
     id: 1,
     title: "Found a bug or something went wrong?",
-    description: `Send me an email at ${import.meta.env.VITE_CONTACT_EMAIL} and let me know what you were doing when it happened. If you have a screenshot, it will make it much easier to figure out what went wrong.`,
+    description: `Send me an email at ${import.meta.env.VITE_SUPPORT_EMAIL} and let me know what you were doing when it happened. If you have a screenshot, it will make it much easier to figure out what went wrong.`,
   },
   {
     id: 2,

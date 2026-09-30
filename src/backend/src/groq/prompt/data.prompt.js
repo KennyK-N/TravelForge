@@ -1,3 +1,5 @@
+import { MAX_ACTIVITY, MIN_ACTIVITY } from "#backend/util/constants.js";
+
 export default function buildTripPlannerPrompt({
   startDate,
   endDate,
@@ -53,7 +55,7 @@ Rules:
    - Do not include extra properties.
 
 4. Each day must have a varied number of scheduled activities.
-   - Randomly choose 1, 2, or 3 activities for each day.
+   - Randomly choose between ${MIN_ACTIVITY} and ${MAX_ACTIVITY} activities for each day.
    - Do not use the same number of activities every day unless the trip is only one day.
    - Use fewer activities on the first and last day when possible.
    - Do not fill the entire day.

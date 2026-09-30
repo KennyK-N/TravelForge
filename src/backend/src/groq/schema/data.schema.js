@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { MAX_ACTIVITY, MIN_ACTIVITY } from "#backend/util/constants.js";
+
 const SUB_TITLE_MAX_LENGTH = 45;
 const PLACE_MAX_LENGTH = 80;
 const SUMMARY_MAX_LENGTH = 45;
@@ -29,8 +31,8 @@ const itineraryDaySchema = z.strictObject({
           "Short label for the matching activity. Maximum 45 characters.",
         ),
     )
-    .min(1)
-    .max(3),
+    .min(MIN_ACTIVITY)
+    .max(MAX_ACTIVITY),
 
   date: z.iso.date(),
 
@@ -43,8 +45,8 @@ const itineraryDaySchema = z.strictObject({
           "Specific attraction, restaurant, or area. Maximum 80 characters.",
         ),
     )
-    .min(1)
-    .max(3),
+    .min(MIN_ACTIVITY)
+    .max(MAX_ACTIVITY),
 
   summary: z
     .string()
@@ -60,13 +62,13 @@ const itineraryDaySchema = z.strictObject({
           "Brief description of the matching activity. Maximum 60 characters.",
         ),
     )
-    .min(1)
-    .max(3),
+    .min(MIN_ACTIVITY)
+    .max(MAX_ACTIVITY),
 
   coordinates: z
     .array(coordinateSchema)
-    .min(1)
-    .max(3)
+    .min(MIN_ACTIVITY)
+    .max(MAX_ACTIVITY)
     .describe(
       "Coordinates for each matching place. Must line up by index with places, subtitles, description, and time.",
     ),
@@ -78,8 +80,8 @@ const itineraryDaySchema = z.strictObject({
         .regex(timeRegex)
         .describe("Activity time block in HH:mm-HH:mm format."),
     )
-    .min(1)
-    .max(3),
+    .min(MIN_ACTIVITY)
+    .max(MAX_ACTIVITY),
 });
 
 export const tripPlanZodSchema = z.strictObject({

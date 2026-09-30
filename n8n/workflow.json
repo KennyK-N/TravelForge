@@ -1,0 +1,253 @@
+{
+  "name": "TravelForge WorkFlow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -736,
+        0
+      ],
+      "id": "71ce5010-b36e-45b1-9f54-13e0e353497a",
+      "name": "Session Database Cleaning Cron Job"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -736,
+        192
+      ],
+      "id": "3688b308-f635-42d9-80e1-1d2c0c2e313e",
+      "name": "Email Reminder Cron Job"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\n\nconst { latitude, longitude } = item.coordinates;\n\nconst options = {\n  method: 'GET',\n  url: 'https://api.open-meteo.com/v1/forecast',\n  qs: {\n    latitude,\n    longitude,\n    daily: 'temperature_2m_mean,precipitation_sum',\n    forecast_days: 1,\n  },\n  headers: {\n    Accept: 'application/json',\n  },\n};\n\ntry {\n  const response = await this.helpers.httpRequest(options);\n\n  item.temp = response.daily.temperature_2m_mean[0];\n  item.precipitation = response.daily.precipitation_sum[0];\n} catch (error) {\n  // Keep the item unchanged if request fails\n}\n\nreturn { json: item };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        384
+      ],
+      "id": "668100d7-aae0-4b8b-9bdb-8b2149d5558e",
+      "name": "Retrieve Corresponding Weather Information"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE \"weather\"\nSET\n    \"temp\" = {{ $json.temp }},\n    \"precipitation\" = {{ $json.precipitation }}\nWHERE \"taskId\" = '{{ $json.id }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        48,
+        384
+      ],
+      "id": "3e8bdd1d-f144-4569-b019-90d7754b876f",
+      "name": "Update Corresponding Entries",
+      "credentials": {
+        "postgres": {
+          "id": "mLAXyJof9ARz6CRz",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH constants AS (\n    SELECT 'America/Los_Angeles' AS time_zone\n)\n\nSELECT DISTINCT\n  t.\"id\",\n  t.\"startDate\",\n  t.\"endDate\",\n  t.\"userId\",\n  t.\"createdAt\",\n  t.\"toCity\",\n  t.\"toCountry\",\n  t.\"planName\",\n  u.email,\n  u.\"name\"\nFROM task t\nCROSS JOIN constants c\nINNER JOIN \"user\" u\n  ON u.id = t.\"userId\"\nINNER JOIN \"setting\" s\n  ON s.\"userId\" = u.id\nWHERE (t.\"startDate\" AT TIME ZONE 'UTC')::date\n      = ((now() AT TIME ZONE c.time_zone)::date + INTERVAL '1 day')\n  AND s.\"emailNotification\" = TRUE;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        -464,
+        192
+      ],
+      "id": "aff5e513-ac00-4ce7-b86a-245e49900e76",
+      "name": "Retrieve Trips Scheduled for Next Day",
+      "credentials": {
+        "postgres": {
+          "id": "mLAXyJof9ARz6CRz",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM session\nWHERE session.\"expiresAt\" < NOW();",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        -464,
+        0
+      ],
+      "id": "6f422f0d-4d9c-460f-9036-3578bf00794e",
+      "name": "Delete Outdated Entries"
+    },
+    {
+      "parameters": {
+        "sendHTML": true,
+        "subject": "=Trip Reminder for {{ $json.planName }}",
+        "htmlContent": "=<h2>Trip Reminder ✈️</h2>\n\n<p>Hi {{ $json.name }},</p>\n\n<p>This is a reminder that your trip to <strong>{{ $json.toCity }}, {{ $json.toCountry }}</strong> is starting tomorrow!</p>\n\n<p>\n  <strong>Start date:</strong>\n  {{ new Date($json.startDate).toLocaleDateString('en-CA') }}<br>\n  <strong>End date:</strong>\n  {{ new Date($json.endDate).toLocaleDateString('en-CA') }}\n</p>\n\n<p>Have a great trip and enjoy your travels! 🌍</p>\n\n<p>Safe travels,<br>\nTripPlanner-AI</p>",
+        "sender": "personaltestinga166@gmail.com",
+        "receipients": "={{ $json.email }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.sendInBlue",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        192
+      ],
+      "id": "e19c4062-879f-4ec9-a0df-79dd6ad256f2",
+      "name": "Send Reminder Emails"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    w.\"taskId\" AS id,\n    t.\"userId\",\n    t.\"data\" -> 'itinerary' -> 0 -> 'coordinates' -> 0 AS coordinates\nFROM \"task\" AS t\nINNER JOIN \"weather\" AS w\n    ON t.id = w.\"taskId\"\nWHERE t.\"data\" -> 'itinerary' IS NOT NULL\n  AND t.\"data\" -> 'itinerary' <> '[]'::jsonb",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        -464,
+        384
+      ],
+      "id": "ab61c67a-6380-47d8-b220-d07c34822c78",
+      "name": "Retrieve Trips",
+      "credentials": {
+        "postgres": {
+          "id": "mLAXyJof9ARz6CRz",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -736,
+        384
+      ],
+      "id": "df56c4e8-3f47-42de-9227-a7ea03eed226",
+      "name": "Temperature Updater Cron Job"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Session Database Cleaning Cron Job": {
+      "main": [
+        [
+          {
+            "node": "Delete Outdated Entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Reminder Cron Job": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Trips Scheduled for Next Day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Corresponding Weather Information": {
+      "main": [
+        [
+          {
+            "node": "Update Corresponding Entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Trips Scheduled for Next Day": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Trips": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Corresponding Weather Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Temperature Updater Cron Job": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Trips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "44fc71d4-3330-4ca1-b615-ec458bd894ee",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9281f7d695c9578927c980a403af10de526866a385d4e0a0af4b799e02979468"
+  },
+  "nodeGroups": [],
+  "id": "ILg3A9g9qBIPLZif",
+  "tags": []
+}

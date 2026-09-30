@@ -6,7 +6,7 @@ import groqConfig from "#backend/groq/groq.config.js";
 import groqClient from "#backend/groq/groqClient.js";
 
 const MESSAGE_LIMIT = 10;
-const DAY_LIMIT = 5;
+const DAY_LIMIT = 4;
 
 export async function generateTripPlan({
   startDate,
