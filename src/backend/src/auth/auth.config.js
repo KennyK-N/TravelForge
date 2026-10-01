@@ -3,6 +3,8 @@ import { prisma } from "#backend/prisma/prisma.client.js";
 import config from "#backend/config/index.js";
 import { sendResetPasswordEmail } from "#backend/services/brevo.service.js";
 
+const isProd = config.NODE_ENV === "production";
+
 export const betterAuthConfig = {
   database: prismaAdapter(prisma, {
     provider: "postgres",
@@ -26,6 +28,13 @@ export const betterAuthConfig = {
     },
   },
   trustedOrigins: [config.FRONT_END_URL],
+  advanced: {
+    useSecureCookies: isProd,
+    defaultCookieAttributes: {
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
+    },
+  },
   socialProviders: {
     google: {
       clientId: config.GOOGLE_CLIENT_ID,
