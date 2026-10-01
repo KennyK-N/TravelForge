@@ -10,6 +10,7 @@ import Router from "#backend/routes/index.js";
 import { betterAuthRouter } from "#backend/routes/auth-routes.js";
 
 const app = express();
+app.set("trust proxy", 1);
 
 const PORT = config["PORT"] || 8080;
 
@@ -23,7 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 // Mount all routes in here
 app.use(betterAuthRouter);
 
-app.use("/api", Router);
 app.use(Router);
 
 // Error handler middleware has to be mounted last
