@@ -1,5 +1,11 @@
 {
   "installCommand": "npm ci --include=dev",
   "buildCommand": "npm run build",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/auth/:path*",
+      "destination": "https://backend-production-8547.up.railway.app/auth/:path*"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
