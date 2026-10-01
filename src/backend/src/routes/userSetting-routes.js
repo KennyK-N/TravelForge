@@ -6,8 +6,6 @@ import authMiddleware from "#backend/middleware/auth.middleware.js";
 import userSettingService from "#backend/services/userSetting.service.js";
 import { userSettingSchema } from "#backend/schemas/index.js";
 
-import { UID_COOKIE_NAME } from "#backend/util/constants.js";
-
 const userSettingRouter = express.Router();
 userSettingRouter.use(authMiddleware);
 
@@ -16,7 +14,7 @@ userSettingRouter.patch(
   validateInput(userSettingSchema.pick({ emailNotification: true })),
   async (req, res, next) => {
     try {
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
       const { emailNotification } = req.validated.body;
 
       const response = await userSettingService.updateEmailNotification({
@@ -37,7 +35,7 @@ userSettingRouter.patch(
   validateInput(userSettingSchema.pick({ confirmDelete: true })),
   async (req, res, next) => {
     try {
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
       const { confirmDelete } = req.validated.body;
 
       const response = await userSettingService.updateConfirmDelete({
@@ -58,7 +56,7 @@ userSettingRouter.patch(
   validateInput(userSettingSchema.pick({ theme: true })),
   async (req, res, next) => {
     try {
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
       const { theme } = req.validated.body;
 
       const response = await userSettingService.updateTheme({
@@ -76,7 +74,7 @@ userSettingRouter.patch(
 
 userSettingRouter.get("/getSetting", async (req, res, next) => {
   try {
-    const userId = req.cookies[UID_COOKIE_NAME];
+    const userId = req.userId;
 
     const response = await userSettingService.getSetting({ userId });
     if (!response.success) throw new Error(response.msg);

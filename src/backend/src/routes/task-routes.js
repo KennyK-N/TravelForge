@@ -12,7 +12,6 @@ import { taskSchema } from "#backend/schemas/index.js";
 import { getWeatherMetrics } from "#backend/services/weather.service.js";
 import { generateTripPlan } from "#backend/services/groq.service.js";
 
-import { UID_COOKIE_NAME } from "#backend/util/constants.js";
 import config from "#backend/config/index.js";
 
 const taskRouter = express.Router();
@@ -33,7 +32,7 @@ taskRouter.post(
         emailNotification,
       } = req.validated.body;
 
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
 
       let tripPlanResponse;
 
@@ -115,7 +114,7 @@ taskRouter.get(
     try {
       const { taskId } = req.validated.query;
 
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
 
       const response = await taskService.viewTask({ taskId, userId });
 
@@ -134,7 +133,7 @@ taskRouter.get(
     try {
       const { planName } = req.validated.query;
 
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
 
       const response = await taskService.SearchTaskIds({ planName, userId });
 
@@ -154,7 +153,7 @@ taskRouter.get(
     try {
       const { page, limit } = req.validated.query;
 
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
 
       const response = await taskService.getTasks({
         userId,
@@ -178,7 +177,7 @@ taskRouter.patch(
     try {
       const { taskId, latitude, longitude } = req.validated.body;
 
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
 
       const weatherMetrics = await getWeatherMetrics(latitude, longitude);
 
@@ -209,7 +208,7 @@ taskRouter.delete(
   async (req, res, next) => {
     try {
       const { taskId } = req.validated.query;
-      const userId = req.cookies[UID_COOKIE_NAME];
+      const userId = req.userId;
 
       const response = await taskService.deleteTask({ taskId, userId });
 
@@ -224,7 +223,7 @@ taskRouter.delete(
 
 taskRouter.delete("/deleteAllTasks", async (req, res, next) => {
   try {
-    const userId = req.cookies[UID_COOKIE_NAME];
+    const userId = req.userId;
     const response = await taskService.deleteAllTasks({ userId });
 
     if (!response.success) throw new Error(response.msg);

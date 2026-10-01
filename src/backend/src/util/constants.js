@@ -1,19 +1,3 @@
-import config from "#backend/config/index.js";
-
-const isProd = config.NODE_ENV === "production";
-
-export const AUTH_COOKIE_NAME = "better-auth.session_token";
-export const UID_COOKIE_NAME = "uid";
-
-export const SESSION_COOKIE_OPTIONS = {
-  maxAge: 604800000,
-  path: "/",
-  httpOnly: true,
-  sameSite: isProd ? "none" : "lax",
-  secure: isProd,
-  partitioned: isProd,
-};
-
 export const WEATHER_PAREM = {
   temp: "temperature_2m_mean",
   precipitation: "precipitation_sum",

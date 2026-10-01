@@ -6,7 +6,6 @@ import authMiddleware from "#backend/middleware/auth.middleware.js";
 import validateInput from "#backend/middleware/inputValidator.middleware.js";
 import { authSchema } from "#backend/schemas/index.js";
 
-import { UID_COOKIE_NAME } from "#backend/util/constants.js";
 import config from "#backend/config/index.js";
 
 const betterAuthRouter = express.Router();
@@ -21,20 +20,14 @@ betterAuthRouter.all("/api/auth/error", (req, res) => {
 
 betterAuthRouter.all("/api/auth/*splat", toNodeHandler(auth));
 
-authRouter.get("/me", authMiddleware, async (req, res) => {
-  try {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers),
-    });
-    res.json({
-      success: true,
-      isAuthenticated: true,
-      ...session,
-      msg: "User is authenticated",
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
+// authMiddleware already fetched the session and stored it on req.session
+authRouter.get("/me", authMiddleware, (req, res) => {
+  res.json({
+    success: true,
+    isAuthenticated: true,
+    ...req.session,
+    msg: "User is authenticated",
+  });
 });
 
 authRouter.post(
@@ -59,12 +52,8 @@ authRouter.post(
           callbackURL: config.FRONT_END_URL,
         },
       });
-      var cookie = data.headers.get("set-cookie");
 
-      if (cookie) {
-        res.clearCookie(UID_COOKIE_NAME);
-        res.append("Set-Cookie", cookie);
-      }
+      forwardCookies(data, res);
 
       res.json({
         success: true,
@@ -93,12 +82,7 @@ authRouter.post(
         },
       });
 
-      var cookie = data.headers.get("set-cookie");
-
-      if (cookie) {
-        res.clearCookie(UID_COOKIE_NAME);
-        res.append("Set-Cookie", cookie);
-      }
+      forwardCookies(data, res);
 
       res.json({
         success: true,
@@ -136,12 +120,7 @@ authRouter.get("/google-sign-in", async (req, res, next) => {
       headers: fromNodeHeaders(req.headers),
     });
 
-    const cookie = data.headers.get("set-cookie");
-
-    if (cookie) {
-      res.clearCookie(UID_COOKIE_NAME);
-      res.append("Set-Cookie", cookie);
-    }
+    forwardCookies(data, res);
 
     return res.redirect(data.response.url);
   } catch (err) {
@@ -157,12 +136,7 @@ authRouter.delete("/delete-account", authMiddleware, async (req, res, next) => {
       body: {},
     });
 
-    const cookie = data.headers.get("set-cookie");
-
-    if (cookie) {
-      res.clearCookie(UID_COOKIE_NAME);
-      res.append("Set-Cookie", cookie);
-    }
+    forwardCookies(data, res);
 
     return res.json({
       success: true,
@@ -257,16 +231,19 @@ authRouter.post(
 
 export { authRouter, betterAuthRouter };
 
+// Forwards every Set-Cookie header Better Auth produced to the browser.
+// getSetCookie() returns each cookie separately (get("set-cookie") merges them).
+function forwardCookies(data, res) {
+  for (const c of data.headers.getSetCookie()) {
+    res.append("Set-Cookie", c);
+  }
+}
+
 async function signOutAndClearCookies(req, res) {
   const data = await auth.api.signOut({
     returnHeaders: true,
     headers: fromNodeHeaders(req.headers),
   });
 
-  const cookie = data.headers.get("set-cookie");
-
-  if (cookie) {
-    res.clearCookie(UID_COOKIE_NAME);
-    res.append("Set-Cookie", cookie);
-  }
+  forwardCookies(data, res);
 }
