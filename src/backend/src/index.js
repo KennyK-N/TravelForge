@@ -10,6 +10,9 @@ import Router from "#backend/routes/index.js";
 import { betterAuthRouter } from "#backend/routes/auth-routes.js";
 
 const app = express();
+
+// Needed on Railway since requests go through a reverse proxy before reaching the server.
+// We Trust the proxy so Express correctly handles forwarded IP/protocol headers
 app.set("trust proxy", 1);
 
 const PORT = config["PORT"] || 8080;
