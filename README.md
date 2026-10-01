@@ -42,7 +42,7 @@ TravelForge is an AI-assisted trip planning app. Give it a destination, a date r
 | Transactional Email   | Brevo (`@getbrevo/brevo`)                       |
 | Validation            | Zod                                             |
 | Security / Middleware | Helmet, express-rate-limit, CORS, Morgan        |
-| Automation            | n8n                                             |
+| Automation            | n8n 2.41.4                                      |
 | Containerization      | Docker, Docker Compose                          |
 
 ---
