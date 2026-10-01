@@ -178,7 +178,6 @@ authRouter.post(
   },
 );
 
-//HAVENT TESTED BELOW
 authRouter.post(
   "/forgot-password",
   validateInput(authSchema.forgotPassword),
