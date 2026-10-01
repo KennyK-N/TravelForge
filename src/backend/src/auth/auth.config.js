@@ -31,11 +31,9 @@ export const betterAuthConfig = {
   advanced: {
     useSecureCookies: isProd,
     defaultCookieAttributes: {
-      defaultCookieAttributes: {
-        sameSite: isProd ? "none" : "lax",
-        secure: isProd,
-        partitioned: isProd,
-      },
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
+      partitioned: isProd,
     },
   },
   socialProviders: {
