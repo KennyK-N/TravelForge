@@ -4,6 +4,14 @@ TravelForge is an AI-assisted trip planning app. Give it a destination, a date r
 
 ---
 
+## Demo
+
+→ **[Watch the demo video](recordings/demo.mp4)**
+
+> **Deployment note:** For demo purposes, the frontend was hosted on [Vercel](https://vercel.com), the backend on [Railway](https://railway.com), and n8n on [Render](https://render.com).
+
+---
+
 ## Features
 
 - **Auth** — email/password and Google OAuth login via Better Auth
